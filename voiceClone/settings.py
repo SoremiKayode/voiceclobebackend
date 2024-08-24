@@ -38,6 +38,11 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    "82.112.237.222",
+    "https://naynobo.site/"
+    "naynobo.site"
+    "tts.naynobo.site"
+    "api.naynobo.site",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -60,6 +65,11 @@ ROOT_URLCONF = 'voiceClone.urls'
 
 ALLOWED_HOST = [
     'http://localhost:3000',
+    "82.112.237.222",
+    "https://naynobo.site/"
+    "naynobo.site"
+    "tts.naynobo.site"
+    "api.naynobo.site",
 ]
 TEMPLATES = [
     {
