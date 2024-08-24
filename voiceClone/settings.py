@@ -65,6 +65,8 @@ ALLOWED_HOST = [
     "https://api.naynobo.site",
     "http://82.112.237.222",  # Add the scheme
     "http://localhost:300", # Add
+    '82.112.237.222',
+    'api.naynobo.site'
 ]
 TEMPLATES = [
     {
