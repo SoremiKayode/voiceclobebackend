@@ -37,12 +37,9 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    "82.112.237.222",
-    "https://naynobo.site/"
-    "naynobo.site"
-    "tts.naynobo.site"
-    "api.naynobo.site",
+    "https://naynobo.site",
+    "https://api.naynobo.site",
+    "http://82.112.237.222",  # Add the scheme
 ]
 
 CORS_ALLOW_CREDENTIALS = True
