@@ -60,13 +60,12 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'voiceClone.urls'
 
-ALLOWED_HOST = [
-    "https://naynobo.site",
-    "https://api.naynobo.site",
-    "http://82.112.237.222",  # Add the scheme
-    "http://localhost:300", # Add
-    '82.112.237.222',
-    'api.naynobo.site'
+ALLOWED_HOSTS = ALLOWED_HOSTS = [
+    "naynobo.site",
+    "api.naynobo.site",
+    "82.112.237.222",
+    "localhost",
+    "127.0.0.1",
 ]
 TEMPLATES = [
     {
