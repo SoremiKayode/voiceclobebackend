@@ -1,0 +1,3 @@
+ZOHO_EMAIL='admin@codesignite.com'
+ZOHO_EMAIL_PASSWORD='Abayomi1994@'
+FIXED_TOKEN = "78639nfjfnnvod00ekv8hnvieimmvm"
