@@ -61,8 +61,10 @@ CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'voiceClone.urls'
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
-    "naynobo.site",
+    "www.naynobo.site",
     "api.naynobo.site",
+    "https://www.naynobo.site"
+    "http://www.naynobo.site"
     "82.112.237.222",
     "localhost",
     "127.0.0.1",
