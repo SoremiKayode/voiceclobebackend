@@ -87,7 +87,7 @@ def convert(request):
             return Response({'detail': f"Missing parameters: text or reference_wav is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Make the POST request to the TTS API
-        response = requests.post('http://localhost:5002/api/tts', headers=params, data=params)
+        response = requests.post('http://82.112.237.222:5002/', headers=params, data=params)
         audio_content = response.content
         response = HttpResponse(audio_content, content_type='audio/wav')
         response['Content-Disposition'] = 'attachment; filename="output.wav"'
