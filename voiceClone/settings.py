@@ -39,7 +39,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "https://naynobo.site",
     "https://api.naynobo.site",
-    "http://82.112.237.222",  # Add the scheme
+    "http://82.112.237.222",
+    "http://localhost:3000"# Add the scheme
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -67,6 +68,7 @@ ALLOWED_HOSTS = ALLOWED_HOSTS = [
     "http://www.naynobo.site"
     "82.112.237.222",
     "localhost",
+    "http://localhost:3000",
     "127.0.0.1",
 ]
 TEMPLATES = [

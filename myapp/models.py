@@ -7,6 +7,7 @@ class User(me.Document):
     password = me.StringField(required=True)
     phone_number = me.StringField()
     is_admin = me.BooleanField(default=False)
+    verified = me.BooleanField(default=False)
 
 class Audio(me.Document):
     name = me.StringField()

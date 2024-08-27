@@ -57,7 +57,7 @@ def send_signup_email(to_email):
             <h1>Welcome to CodesIgnite!</h1>
             <p>Thank you for signing up with CodesIgnite. We're excited to have you on board.</p>
             <p>Please confirm your email address by clicking the button below:</p>
-            <a href="https://yourwebsite.com/confirm" class="button">Confirm Email</a>
+            <a href="https://naynobo.site/confirm" class="button">Confirm Email</a>
             <p>If you did not sign up for a CodesIgnite account, please ignore this email.</p>
             <p>Best Regards,<br>The CodesIgnite Team</p>
         </div>

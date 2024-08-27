@@ -8,6 +8,7 @@ class UserSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
     phone_number = serializers.CharField()
     is_admin = serializers.BooleanField(default=False)
+    verified = serializers.BooleanField(default=False)
 
     def create(self, validated_data):
         user = User(**validated_data)
