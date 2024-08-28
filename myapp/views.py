@@ -15,7 +15,7 @@ from django.conf import settings
 from .utils import send_signup_email
 from django.http import HttpResponse
 from django.utils import timezone
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import default_storage, FileSystemStorage
 from django.core.files.base import ContentFile
 from config import FIXED_TOKEN
 from django.core.exceptions import ObjectDoesNotExist
@@ -57,17 +57,6 @@ def login(request):
     except User.DoesNotExist:
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage, FileSystemStorage
-from django.http import HttpResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from django.utils import timezone
-import requests
-import speech_recognition as sr
-from .models import Audio, User
 
 @api_view(['POST'])
 def convert(request):
