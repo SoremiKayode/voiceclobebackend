@@ -9,6 +9,7 @@ urlpatterns = [
     path('all-profiles', views.all_profiles, name='all_profiles'),
     path('all-audio', views.all_audio, name='all_audio'),
     path('logout', views.logout, name='logout'),
-    path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
-    path('confirm/', views.confirm_user, name='confirm_user'),
+    path('deleteuser', views.delete_user, name='deleteuser'),
+    path('confirm', views.confirm_user, name='confirm'),
+    path('deleteaudio', views.delete_audio, name='deleteaudio'),
 ]

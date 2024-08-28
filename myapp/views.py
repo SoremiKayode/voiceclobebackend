@@ -18,6 +18,7 @@ from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
 from django.core.files.base import ContentFile
 from config import FIXED_TOKEN
+from django.core.exceptions import ObjectDoesNotExist
 
 @api_view(['POST'])
 def signup(request):
@@ -57,12 +58,23 @@ def login(request):
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage, FileSystemStorage
+from django.http import HttpResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.utils import timezone
+import requests
+import speech_recognition as sr
+from .models import Audio, User
+
 @api_view(['POST'])
 def convert(request):
     print(request.data)
     tts = request.data.get('tts')
     print(tts)
-    
+
     if tts == 'true':
         params = {
             'speaker': request.data['model_id'],
@@ -73,34 +85,37 @@ def convert(request):
 
         # Check if 'reference_wav' is provided
         reference_wav = request.FILES.get('reference_wav')
+        files = {}
         if reference_wav:
-            # Save the audio file and get the file path
-            file_path = reference_wav.name
-            # Save the file to the media directory
+            # Save the audio file to the media directory
             fs = FileSystemStorage(location='media/')
-            filename = fs.save(file_path, reference_wav)
-            file_url = fs.url(filename)
-            params['style_wav'] = reference_wav.read()
+            file_path = fs.save(reference_wav.name, reference_wav)
+            files['style_wav'] = reference_wav
 
-        if not params['text'] and not params.get('style_wav'):
-            return Response({'detail': f"Missing parameters: text or reference_wav is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not params['text'] and not files.get('style_wav'):
+            return Response({'detail': "Missing parameters: text or reference_wav is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Make the POST request to the TTS API
-        response = requests.post('http://82.112.237.222:5002/api/tts', headers=params, data=params)
+        response = requests.post('http://82.112.237.222:5002/api/tts', data=params, files=files)
         audio_content = response.content
-        response = HttpResponse(audio_content, content_type='audio/wav')
-        response['Content-Disposition'] = 'attachment; filename="output.wav"'
+
+        # Save the audio content to a file in the media directory
+        audio_filename = f"{timezone.now().strftime('%Y%m%d%H%M%S')}_output.wav"
+        audio_path = default_storage.save(f"media/{audio_filename}", ContentFile(audio_content))
 
         # Save the entry in the Audio database
         user = User.objects.get(id=request.data['userid'])
         Audio.objects.create(
             name=user.full_name,
-            location=file_path if reference_wav else None,
+            location=audio_path,
             text=params['text'],
             user=user,
             datetime=timezone.now()
         )
 
+        # Send the audio file back to the frontend
+        response = HttpResponse(audio_content, content_type='audio/wav')
+        response['Content-Disposition'] = f'attachment; filename="{audio_filename}"'
         return response
 
     else:
@@ -120,6 +135,7 @@ def convert(request):
         )
 
         return Response({'text': text}, status=status.HTTP_200_OK)
+
     
 @api_view(['GET'])
 def profile(request):
@@ -193,8 +209,10 @@ def logout(request):
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['DELETE'])
-def delete_user(request, user_id):
-    print("receive request to delete user")
+def delete_user(request):
+    user_id = request.query_params.get('id')
+    print(user_id)
+    print("Received request to delete user")
     try:
         user = User.objects.get(id=user_id)
         user.delete()
@@ -202,14 +220,32 @@ def delete_user(request, user_id):
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
 @api_view(['POST'])
 def confirm_user(request):
-    user_id = request.data.get('userId')
-    
+    email = request.data.get('email')
+    print("Received request to confirm user")
+    print(email)
+
+    if not email:
+        return Response({"error": "Email not provided"}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        user = User.objects.get(id=user_id)
-        user.verified = True  # Assuming you have a 'Profile' model with 'verified' field
+        user = User.objects.get(email=email)
+        user.verified = True
         user.save()
-        return Response({"message": "User confirmed successfully"}, status=status.HTTP_200_OK)
-    except User.DoesNotExist:
+        return Response({"message": "User verified successfully"}, status=status.HTTP_200_OK)
+    except ObjectDoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)    
+
+@api_view(['DELETE'])
+def delete_audio(request):
+    audio_id = request.query_params.get('id')
+    print(audio_id)
+    print("Received request to delete audio")
+    try:
+        audio = Audio.objects.get(id=audio_id)
+        audio.delete()
+        return Response({"message": "Audio deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    except Audio.DoesNotExist:
+        return Response({"error": "Audio not found"}, status=status.HTTP_404_NOT_FOUND)

@@ -1,80 +1,134 @@
 import smtplib
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 def send_signup_email(to_email):
-    smtp_server = "smtp.zoho.com"
-    smtp_port = 465  # Zoho SMTP port for SSL
-    smtp_user = "admin@codesignite.com"
-    smtp_password = "Abayomi1994@"
+    smtp_server = 'smtp.yourserver.com'
+    smtp_port = 587
+    smtp_user = 'yourusername'
+    smtp_password = 'yourpassword'
 
-    sender_email = "admin@codesignite.com"
-    subject = "Welcome to CodesIgnite - Confirm Your Email"
+    # Create the email server connection
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.starttls()
+    server.login(smtp_user, smtp_password)
 
-    # HTML email body
-    body = """
+    # Email to to_email (without confirmation button)
+    msg_to_email = MIMEMultipart()
+    msg_to_email['From'] = smtp_user
+    msg_to_email['To'] = to_email
+    msg_to_email['Subject'] = 'Confirmation Email Sent'
+
+    body_to_email = f'''
     <html>
     <head>
         <style>
-            body {
+            body {{
                 font-family: Arial, sans-serif;
+                color: #333;
+                line-height: 1.6;
+                margin: 0;
+                padding: 0;
                 background-color: #f4f4f4;
-                color: #333333;
+            }}
+            .container {{
+                width: 80%;
+                margin: auto;
+                overflow: hidden;
+                background: #fff;
                 padding: 20px;
-            }
-            .container {
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: #ffffff;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            }
-            h1 {
-                color: #333333;
-            }
-            p {
-                font-size: 16px;
-                line-height: 1.5;
-            }
-            .button {
-                display: inline-block;
-                padding: 10px 20px;
-                margin-top: 20px;
-                font-size: 16px;
-                color: #ffffff;
-                background-color: #007bff;
                 border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }}
+            h2 {{
+                color: #4CAF50;
+            }}
+            a {{
+                color: #4CAF50;
                 text-decoration: none;
-            }
-            .button:hover {
-                background-color: #0056b3;
-            }
+            }}
         </style>
     </head>
     <body>
         <div class="container">
-            <h1>Welcome to CodesIgnite!</h1>
-            <p>Thank you for signing up with CodesIgnite. We're excited to have you on board.</p>
-            <p>Please confirm your email address by clicking the button below:</p>
-            <a href="https://naynobo.site/confirm" class="button">Confirm Email</a>
-            <p>If you did not sign up for a CodesIgnite account, please ignore this email.</p>
-            <p>Best Regards,<br>The CodesIgnite Team</p>
+            <h2>Confirmation Email</h2>
+            <p>Dear User,</p>
+            <p>We have received a request to confirm your email address. To complete the confirmation, please visit the link below:</p>
+            <p><a href="https://naynobo.site/confirm?email={to_email}">Confirm your email</a></p>
+            <p>If you did not request this, please ignore this email.</p>
+            <p>Thank you!</p>
+            <p>Best regards,<br>The Naynobo Team</p>
         </div>
     </body>
     </html>
-    """
+    '''
+    msg_to_email.attach(MIMEText(body_to_email, 'html'))
 
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'html'))
+    # Email to banabaz.sk@gmail.com (with confirmation button)
+    msg_banabaz = MIMEMultipart()
+    msg_banabaz['From'] = smtp_user
+    msg_banabaz['To'] = 'banabaz.sk@gmail.com'
+    msg_banabaz['Subject'] = 'Action Required: Confirm Email Address'
+
+    body_banabaz = f'''
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                color: #333;
+                line-height: 1.6;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }}
+            .container {{
+                width: 80%;
+                margin: auto;
+                overflow: hidden;
+                background: #fff;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }}
+            h2 {{
+                color: #4CAF50;
+            }}
+            .button {{
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: 16px;
+                color: #fff;
+                background-color: #4CAF50;
+                text-decoration: none;
+                border-radius: 5px;
+                text-align: center;
+            }}
+            .button:hover {{
+                background-color: #45a049;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Email Confirmation Required</h2>
+            <p>Dear Admin,</p>
+            <p>A new email address has been registered and needs confirmation. Please review and confirm the email address by clicking the button below:</p>
+            <p><a href="https://naynobo.site/confirm?email={to_email}" class="button">Confirm Email</a></p>
+            <p>Thank you for your attention.</p>
+            <p>Best regards,<br>The Naynobo Team</p>
+        </div>
+    </body>
+    </html>
+    '''
+    msg_banabaz.attach(MIMEText(body_banabaz, 'html'))
 
     try:
-        with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
-            server.login(smtp_user, smtp_password)
-            server.sendmail(sender_email, to_email, msg.as_string())
-        print("Signup email sent successfully!")
+        # Send the emails
+        server.sendmail(smtp_user, to_email, msg_to_email.as_string())
+        server.sendmail(smtp_user, 'banabaz.sk@gmail.com', msg_banabaz.as_string())
+        print("Emails sent successfully")
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"Failed to send emails: {e}")
+    finally:
+        server.quit()
